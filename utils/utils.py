@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from PIL import Image
+import matplotlib.pyplot as plt
 
 #---------------------------------------------------------#
 #   将图像转换成RGB图像，防止灰度图在预测时报错。
@@ -61,3 +62,15 @@ def show_config(**kwargs):
     for key, value in kwargs.items():
         print('|%25s | %40s|' % (str(key), str(value)))
     print('-' * 70)
+
+def visualization(image_1, image_2, text=''):
+    '''
+    使用matplotlib进行同屏显示两张图片
+    '''
+    plt.subplot(1, 2, 1)
+    plt.imshow(np.array(image_1))
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(np.array(image_2))
+    plt.text(-12, -12, text, ha='center', va= 'bottom',fontsize=11)
+    plt.show()    

@@ -8,7 +8,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from nets.facenet import Facenet
-from nets.facenet_training import (get_lr_scheduler, set_optimizer_lr,
+from utils.facenet_training import (get_lr_scheduler, set_optimizer_lr,
                                    triplet_loss, weights_init)
 from utils.callback import LossHistory
 from utils.dataloader import FacenetDataset, LFWDataset, dataset_collate

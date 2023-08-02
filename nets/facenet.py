@@ -75,6 +75,7 @@ class Facenet(nn.Module):
             x = self.Dropout(x)
             x = self.Bottleneck(x)
             x = self.last_bn(x)
+            ## 进行L2标准化，对128维向量的每一个参数进行/L2范数，其中L2范数为向量元素绝对值的平方和再开方。
             x = F.normalize(x, p=2, dim=1)
             return x
         x = self.backbone(x)

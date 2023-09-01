@@ -13,7 +13,7 @@ class ConvertModelType(object):
         #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
         #   验证集损失较低不代表准确度较高，仅代表该权值在验证集上泛化性能较好。
         #--------------------------------------------------------------------------#
-        "model_path"    : "model_data/facenet_mobilenet.pth",
+        "model_path"    : "checkpoint/facenet_mobilenet.pth",
         #--------------------------------------------------------------------------#
         #   输入图片的大小。
         #--------------------------------------------------------------------------#
@@ -44,11 +44,13 @@ class ConvertModelType(object):
         #---------------------------------------------------#
         device      = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.net    = facenet(backbone=self.backbone, mode="predict").eval()
-        self.net.load_state_dict(torch.load(self.model_path, map_location=device), strict=False)
+        model_dict = torch.load(self.model_path, map_location=device)
+        if 'state_dict' in model_dict:  
+            self.net.load_state_dict(model_dict['state_dict'], strict=False)
+        else :
+            self.net.load_state_dict(model_dict, strict=False)
 
         if self.cuda:
-            self.net = torch.nn.DataParallel(self.net)
-            cudnn.benchmark = True
             self.net = self.net.cuda()
 
     def pth_to_onnx(self, output_path):
@@ -61,7 +63,7 @@ class ConvertModelType(object):
             img = img.cuda()
 
         torch.onnx.export(self.net,
-                        img,
+                        (img,'predict'),
                         output_path,
                         verbose=False,
                         opset_version=11,
@@ -72,8 +74,8 @@ class ConvertModelType(object):
 if __name__ == '__main__':
     ## 构建转换示例
     ## Notice:通过下一行的形参来控制参数，其他地方不要修改
-    convert = ConvertModelType(cuda=False)
-    onnx_path = 'model_data/onnx/model.onnx'
+    convert = ConvertModelType(cuda=True)
+    onnx_path = 'checkpoint/onnx/model.onnx'
     convert.pth_to_onnx(onnx_path)
     pass
 

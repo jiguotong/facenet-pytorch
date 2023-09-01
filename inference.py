@@ -13,7 +13,7 @@ class Prediction(object):
         #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
         #   验证集损失较低不代表准确度较高，仅代表该权值在验证集上泛化性能较好。
         #--------------------------------------------------------------------------#
-        "model_path"    : "model_data/facenet_mobilenet.pth",
+        "model_path"    : "checkpoint/facenet_mobilenet.pth",
         #--------------------------------------------------------------------------#
         #   输入图片的大小。
         #--------------------------------------------------------------------------#
@@ -108,22 +108,27 @@ if __name__ == "__main__":
     ## 构建预测示例
     ## Notice:通过下一行的形参来控制参数，其他地方不要修改
     prediction = Prediction(visualize = True, cuda=False)
-        
-    while True:
-        image_1 = input('Input image_1 filename:')
-        try:
-            image_1 = Image.open(image_1)
-        except:
-            print('Image_1 Open Error! Try again!')
-            continue
+    
+    #image_1 = input('Input image_1 filename:')
+    image_1 = 'data/input/1_001.jpg'
+    try:
+        image_1 = Image.open(image_1)
+    except:
+        print('Image_1 Open Error! Try again!')
 
-        image_2 = input('Input image_2 filename:')
-        try:
-            image_2 = Image.open(image_2)
-        except:
-            print('Image_2 Open Error! Try again!')
-            continue
-        
-        ## 进行人脸比对
-        probability = prediction.detect_image(image_1,image_2)
-        print('probability:', probability)
+    #image_2 = input('Input image_2 filename:')
+    image_2 = 'data/input/1_002.jpg'
+    try:
+        image_2 = Image.open(image_2)
+    except:
+        print('Image_2 Open Error! Try again!')
+    
+    ## 进行人脸比对
+    probability = prediction.detect_image(image_1,image_2)
+
+    ## 距离阈值为1.1，大于阈值则不是同一人脸，小于阈值验证为同一人脸
+    if float(probability)<=1.1:
+        same=True
+    else:
+        same=False
+    print('probability:', probability, same)
